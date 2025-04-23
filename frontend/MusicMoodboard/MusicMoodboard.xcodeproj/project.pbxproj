@@ -16,6 +16,7 @@
 		E10F5D512DB8026B008BBC95 /* MusicMoodboardUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10F5D502DB8026B008BBC95 /* MusicMoodboardUITestsLaunchTests.swift */; };
 		E15F8D4C2DB8230E00FCD044 /* HumanEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D4B2DB8230E00FCD044 /* HumanEntry.swift */; };
 		E15F8D4E2DB8233400FCD044 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D4D2DB8233400FCD044 /* FileStore.swift */; };
+		E15F8D542DB8F64500FCD044 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E15F8D532DB8F64500FCD044 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		E10F5D502DB8026B008BBC95 /* MusicMoodboardUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicMoodboardUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		E15F8D4B2DB8230E00FCD044 /* HumanEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HumanEntry.swift; sourceTree = "<group>"; };
 		E15F8D4D2DB8233400FCD044 /* FileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStore.swift; sourceTree = "<group>"; };
+		E15F8D532DB8F64500FCD044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				E10F5D342DB80263008BBC95 /* ContentView.swift */,
 				E15F8D4B2DB8230E00FCD044 /* HumanEntry.swift */,
 				E15F8D4D2DB8233400FCD044 /* FileStore.swift */,
+				E15F8D532DB8F64500FCD044 /* Info.plist */,
 				E10F5D362DB8026A008BBC95 /* Assets.xcassets */,
 				E10F5D3B2DB8026A008BBC95 /* MusicMoodboard.entitlements */,
 				E10F5D382DB8026A008BBC95 /* Preview Content */,
@@ -241,6 +244,7 @@
 			files = (
 				E10F5D3A2DB8026A008BBC95 /* Preview Assets.xcassets in Resources */,
 				E10F5D372DB8026A008BBC95 /* Assets.xcassets in Resources */,
+				E15F8D542DB8F64500FCD044 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +344,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -403,6 +408,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
