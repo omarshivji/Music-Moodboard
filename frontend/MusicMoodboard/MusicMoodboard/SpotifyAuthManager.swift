@@ -4,9 +4,10 @@ import AppKit
 class SpotifyAuthManager: ObservableObject {
     static let shared = SpotifyAuthManager()
 
-    let clientId = "58ed93f704e94eb78e73e6f72f8238c2"  // Replace with your actual client ID
-    let clientSecret = "7df7d4ddb19b4717b0736ac262b83564"  // Replace with your actual client secret
-    let redirectUri = "MusicMoodboard://callback"  // Replace with your app's redirect URI
+    // Load sensitive data from environment variables
+    let clientId = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_ID"] ?? "defaultClientId"  // Default as fallback
+    let clientSecret = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_SECRET"] ?? "defaultClientSecret"  // Default as fallback
+    let redirectUri = "MusicMoodboard://callback"  // Keep this hardcoded if it's not sensitive (adjust if needed)
     let scopes = "user-library-read"  // Adjust as needed for your app's required scopes
 
     var accessToken: String?
@@ -41,7 +42,6 @@ class SpotifyAuthManager: ObservableObject {
             print("Error: Failed to generate the authorization URL")
         }
     }
-
 
     // Handle the redirect URL after Spotify authorization
     func handleRedirect(url: URL, completion: @escaping (Bool) -> Void) {
