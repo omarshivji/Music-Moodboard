@@ -19,6 +19,8 @@
 		E15F8D542DB8F64500FCD044 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E15F8D532DB8F64500FCD044 /* Info.plist */; };
 		E15F8D562DB927E100FCD044 /* MarkdownViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D552DB927E100FCD044 /* MarkdownViewer.swift */; };
 		E15F8DCA2DBA31F600FCD044 /* HistoryPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */; };
+		E15F8DCC2DBA68B300FCD044 /* SpotifyAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */; };
+		E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		E15F8D532DB8F64500FCD044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E15F8D552DB927E100FCD044 /* MarkdownViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownViewer.swift; sourceTree = "<group>"; };
 		E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryPanel.swift; sourceTree = "<group>"; };
+		E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuthManager.swift; sourceTree = "<group>"; };
+		E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,7 +110,9 @@
 			isa = PBXGroup;
 			children = (
 				E10F5D322DB80263008BBC95 /* MusicMoodboardApp.swift */,
+				E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */,
 				E10F5D342DB80263008BBC95 /* ContentView.swift */,
+				E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */,
 				E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */,
 				E15F8D552DB927E100FCD044 /* MarkdownViewer.swift */,
 				E15F8D4B2DB8230E00FCD044 /* HumanEntry.swift */,
@@ -275,8 +281,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */,
 				E10F5D352DB80263008BBC95 /* ContentView.swift in Sources */,
 				E15F8D562DB927E100FCD044 /* MarkdownViewer.swift in Sources */,
+				E15F8DCC2DBA68B300FCD044 /* SpotifyAuthManager.swift in Sources */,
 				E15F8D4C2DB8230E00FCD044 /* HumanEntry.swift in Sources */,
 				E10F5D332DB80263008BBC95 /* MusicMoodboardApp.swift in Sources */,
 				E15F8D4E2DB8233400FCD044 /* FileStore.swift in Sources */,

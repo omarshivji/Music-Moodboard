@@ -28,6 +28,7 @@ struct ContentView: View {
     @State private var showHistoryPanel = false
     @State private var text: String = ""
     @State private var saveMessage: String? = nil
+    @StateObject private var authManager = SpotifyAuthManager.shared
 
 
 
@@ -83,6 +84,20 @@ struct ContentView: View {
                             .padding(.bottom, 15)
                         }
                         
+                        if let token = authManager.accessToken {
+                                                   Text("Authenticated with Spotify! Token: \(token)")
+                                               } else {
+                                                   Button(action: {
+                                                       authManager.startAuthorization() // Starts the Spotify login flow
+                                                   }) {
+                                                       Text("Log in to Spotify")
+                                                           .padding()
+                                                           .background(Color.green)
+                                                           .foregroundColor(.white)
+                                                           .cornerRadius(8)
+                                                   }
+                                               }
+
                         // ✍️ Notes
                         TextEditor(text: $notes)
                             .font(fontForMood(mood: mood))  // Apply font to the TextEditor text
@@ -218,6 +233,16 @@ struct ContentView: View {
                 .padding()  // Outer padding around the HStack
                 .background((colorScheme == .light ? Color("Cream") : Color.black).opacity(0.8))
             }
+            
+            Button("Login with Spotify") {
+                // Safely unwrap the authURL from SpotifyAuthManager
+                if let authURL = SpotifyAuthManager.shared.authURL {
+                    NSWorkspace.shared.open(authURL)
+                } else {
+                    print("Error: Failed to generate the Spotify authorization URL.")
+                }
+            }
+
             
             // ✅ Saved Message
             if showSavedMessage {
