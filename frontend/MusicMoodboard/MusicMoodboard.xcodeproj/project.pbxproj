@@ -16,7 +16,6 @@
 		E10F5D512DB8026B008BBC95 /* MusicMoodboardUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10F5D502DB8026B008BBC95 /* MusicMoodboardUITestsLaunchTests.swift */; };
 		E15F8D4C2DB8230E00FCD044 /* HumanEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D4B2DB8230E00FCD044 /* HumanEntry.swift */; };
 		E15F8D4E2DB8233400FCD044 /* FileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D4D2DB8233400FCD044 /* FileStore.swift */; };
-		E15F8D542DB8F64500FCD044 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E15F8D532DB8F64500FCD044 /* Info.plist */; };
 		E15F8D562DB927E100FCD044 /* MarkdownViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8D552DB927E100FCD044 /* MarkdownViewer.swift */; };
 		E15F8DCA2DBA31F600FCD044 /* HistoryPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */; };
 		E15F8DCC2DBA68B300FCD044 /* SpotifyAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */; };
@@ -256,7 +255,6 @@
 			files = (
 				E10F5D3A2DB8026A008BBC95 /* Preview Assets.xcassets in Resources */,
 				E10F5D372DB8026A008BBC95 /* Assets.xcassets in Resources */,
-				E15F8D542DB8F64500FCD044 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +457,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MusicMoodboard/Info.plist;
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "We need access to your Desktop to save your entries.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -486,6 +486,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MusicMoodboard/Info.plist;
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "We need access to your Desktop to save your entries.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -84,19 +84,23 @@ struct ContentView: View {
                             .padding(.bottom, 15)
                         }
                         
-                        if let token = authManager.accessToken {
-                                                   Text("Authenticated with Spotify! Token: \(token)")
-                                               } else {
-                                                   Button(action: {
-                                                       authManager.startAuthorization() // Starts the Spotify login flow
-                                                   }) {
-                                                       Text("Log in to Spotify")
-                                                           .padding()
-                                                           .background(Color.green)
-                                                           .foregroundColor(.white)
-                                                           .cornerRadius(8)
-                                                   }
-                                               }
+                        // ▶️ Spotify Login / Status
+                            if let token = authManager.accessToken {
+                              Text("🔑 Authenticated! Token: \(token)")
+                                .font(.subheadline)
+                                .foregroundColor(.green)
+                                .padding(.vertical, 4)
+                            } else {
+                              Button("Log in to Spotify") {
+                                authManager.startAuthorization()
+                              }
+                              .padding(.vertical, 6)
+                              .padding(.horizontal, 12)
+                              .background(Color.green)
+                              .foregroundColor(.white)
+                              .cornerRadius(6)
+                            }
+
 
                         // ✍️ Notes
                         TextEditor(text: $notes)

@@ -2,24 +2,31 @@ import Cocoa
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    func application(_ application: NSApplication, open urls: [URL]) {
-        guard let url = urls.first, url.scheme == "MusicMoodboard" else { return }
-
-        print("URL received: \(url)")  // Debugging the received URL
-        if let code = URLComponents(string: url.absoluteString)?.queryItems?.first(where: { $0.name == "code" })?.value {
-            print("Authorization Code: \(code)")
-            
-            // Now exchange the code for the access token
+    func application(_ app: NSApplication, open urls: [URL]) {
+        print("💥 open urls triggered – received:", urls)
+        
+        guard let url = urls.first else {
+            print("❌ No URL received")
+            return
+        }
+        
+        print("▶️ Full URL:", url.absoluteString)
+        
+        if url.scheme == "MusicMoodboard" {
+            print("✅ URL scheme matches")
+        } else {
+            print("❌ URL scheme mismatch: expected 'MusicMoodboard'")
+        }
+        
+        // Extract the code from the URL query
+        if let code = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "code" })?.value {
+            print("🔑 Authorization Code:", code)
             SpotifyAuthManager.shared.exchangeCodeForToken(code: code) { success in
-                if success {
-                    print("Successfully obtained access token")
-                } else {
-                    print("Failed to obtain access token")
-                }
+                print(success ? "✅ Token fetched" : "❌ Token fetch failed")
             }
         } else {
-            print("Authorization code not found in the URL")
+            print("❌ Authorization code not found in URL")
         }
     }
 }

@@ -12,6 +12,9 @@ class SpotifyAuthManager: ObservableObject {
 
     var accessToken: String?
 
+    // Published variable to track authentication state
+       @Published var isAuthenticated: Bool = false
+    
     // Spotify Authorization URL (where user will authenticate)
     var authURL: URL? {
         // Use URLComponents to build the URL
@@ -45,20 +48,35 @@ class SpotifyAuthManager: ObservableObject {
 
     // Handle the redirect URL after Spotify authorization
     func handleRedirect(url: URL, completion: @escaping (Bool) -> Void) {
-        // Ensure the URL starts with the redirect URI
-        guard url.absoluteString.starts(with: redirectUri) else { return }
-        
-        // Extract the code from the URL's query parameters
+        // make sure this is really our callback
+        guard url.absoluteString.starts(with: redirectUri) else {
+            completion(false)
+            return
+        }
+
+        // pull the “code=…” out of the URL
         let queryItems = URLComponents(string: url.absoluteString)?.queryItems
         guard let code = queryItems?.first(where: { $0.name == "code" })?.value else {
             print("Error: Authorization code not found")
             completion(false)
             return
         }
-        
-        // Exchange the code for the access token
-        exchangeCodeForToken(code: code, completion: completion)
+
+        // exchange that code for a real token
+        exchangeCodeForToken(code: code) { success in
+            if success {
+                // the real token is now in self.accessToken
+                print("🎉 Access token: \(self.accessToken ?? "nil")")
+                completion(true)
+            } else {
+                print("❌ Failed to get token")
+                completion(false)
+            }
+        }
     }
+
+
+
 
     // Exchange the authorization code for an access token
     func exchangeCodeForToken(code: String, completion: @escaping (Bool) -> Void) {
