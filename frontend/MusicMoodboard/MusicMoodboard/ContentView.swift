@@ -44,85 +44,61 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 ScrollView {
+                  VStack(alignment: .leading, spacing: 16) {
+                    // 🎵 Currently Listening To
                     VStack(alignment: .leading) {
-                        // 🎵 Currently Listening To
-                        VStack(alignment: .leading) {
-                            Text("Currently Listening To:")
-                                .font(.headline)
-                                .foregroundColor(.gray.opacity(1.8))
-                                .padding(.leading, 10)
-                                .padding(.top, 10)
-                            
-                            TextField("Enter song name...", text: $song)
-                                .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .font(.title3)
-                                .foregroundColor(.gray.opacity(1.8))
-                                .padding([.leading, .trailing], 10)
-                        }
-                        .padding(.bottom, 15)
-                        
-                        // 🌈 Mood Suggestions
-                        if !moodBasedSuggestions(for: mood).isEmpty {
-                            Text("Suggestions for '\(mood)' mood:")
-                                .font(.subheadline)
-                                .foregroundColor(.gray.opacity(1.8))
-                                .padding(.leading, 10)
-                            
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach(moodBasedSuggestions(for: mood), id: \.self) { suggestion in
-                                        Text(suggestion)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 8)
-                                            .background(Color.gray.opacity(0.2))
-                                            .cornerRadius(8)
-                                            .foregroundColor(.gray.opacity(1.8))
-                                    }
-                                }
-                                .padding(.leading, 10)
-                            }
-                            .padding(.bottom, 15)
-                        }
-                        
-                        // ▶️ Spotify Login / Status
-                            if let token = authManager.accessToken {
-                              Text("🔑 Authenticated! Token: \(token)")
-                                .font(.subheadline)
-                                .foregroundColor(.green)
-                                .padding(.vertical, 4)
-                            } else {
-                              Button("Log in to Spotify") {
-                                authManager.startAuthorization()
-                              }
-                              .padding(.vertical, 6)
+                      Text("Currently Listening To:")
+                        .font(.headline)
+                        .foregroundColor(.gray.opacity(1.8))
+                      TextField("Enter song name...", text: $song)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .font(.title3)
+                        .foregroundColor(.gray.opacity(1.8))
+                    }
+
+                    // 🌈 Mood Suggestions
+                    if !moodBasedSuggestions(for: mood).isEmpty {
+                      Text("Suggestions for ‘\(mood)’:")
+                        .font(.subheadline)
+                        .foregroundColor(.gray.opacity(1.8))
+                      ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                          ForEach(moodBasedSuggestions(for: mood), id: \.self) { suggestion in
+                            Text(suggestion)
                               .padding(.horizontal, 12)
-                              .background(Color.green)
-                              .foregroundColor(.white)
-                              .cornerRadius(6)
-                            }
-
-
-                        // ✍️ Notes
-                        TextEditor(text: $notes)
-                            .font(fontForMood(mood: mood))  // Apply font to the TextEditor text
-                            .padding(EdgeInsets(top: 10, leading: 8, bottom: 10, trailing: 8))  // Adjust the padding here
-                            .frame(minHeight: 1000)
-                            .scrollContentBackground(.hidden)
-                            .background(colorScheme == .light ? Color("Cream") : Color.black)
-                            .foregroundColor(.gray.opacity(1.8))
-                            .overlay(alignment: .topLeading) {
-                                if notes.isEmpty {
-                                    Text(placeholderText)  // Placeholder text
-                                        .font(fontForMood(mood: mood))  // Ensure the same font as the TextEditor
-                                        .foregroundColor(colorScheme == .light
-                                                         ? .gray.opacity(0.7)
-                                                         : .white.opacity(0.7))
-                                        .padding(EdgeInsets(top: 10, leading: 8, bottom: 10, trailing: 8)) // Match padding with TextEditor
-                                }
-                            }
+                              .padding(.vertical, 8)
+                              .background(Color.gray.opacity(0.2))
+                              .cornerRadius(8)
+                              .foregroundColor(.gray.opacity(1.8))
+                          }
+                        }
+                      }
+                    }
+                    // ✍️ Notes
+                    TextEditor(text: $notes)
+                      .font(fontForMood(mood: mood))
+                      .padding(8)
+                      // remove the crazy 1000-point minHeight
+                      //.frame(minHeight: 1000)
+                      .frame(minHeight: 200)        // something more reasonable
+                      .scrollContentBackground(.hidden)
+                      .background(colorScheme == .light ? Color("Cream") : Color.black)
+                      .foregroundColor(.gray.opacity(1.8))
+                      .overlay(alignment: .topLeading) {
+                        if notes.isEmpty {
+                          Text(placeholderText)
+                            .font(fontForMood(mood: mood))
+                            .foregroundColor(colorScheme == .light
+                                             ? .gray.opacity(0.7)
+                                             : .white.opacity(0.7))
+                            .padding(EdgeInsets(top: 10, leading: 8, bottom: 10, trailing: 8))
+                        }
+                      }
                         
                             .border(Color.clear)
                     }
+                    SpotifyLibraryView()
+                          .environmentObject(authManager)
                 }
                 
                 // 🔽 Bottom Bar (Restored)
@@ -183,33 +159,19 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    // Import MP3 button
-                    Button(action: {
-                        showingFileImporter = true
-                    }) {
-                        Label("Import MP3", systemImage: "square.and.arrow.down")
-                            .foregroundColor(.gray.opacity(1.8))
-                        // Removed padding here
-                    }
-                    .buttonStyle(.plain)
-                    .fileImporter(
-                        isPresented: $showingFileImporter,
-                        allowedContentTypes: [.mp3],
-                        allowsMultipleSelection: false
-                    ) { result in
-                        do {
-                            guard let url = try result.get().first else { return }
-                            selectedFile = url
-                            song = url.deletingPathExtension().lastPathComponent
-                            audioPlayer = try AVAudioPlayer(contentsOf: url)
-                            audioPlayer?.prepareToPlay()
-                            audioPlayer?.play()
-                            isPlaying = true
-                            embedSimpleMetadata(from: url)
-                        } catch {
-                            print("Import failed:", error)
-                        }
-                    }
+                    // ▶️ Spotify Login / Status
+                       if let token = authManager.accessToken {
+                         Text("🔑 Authenticated!\(token)")
+                           .font(.subheadline)
+                           .foregroundColor(.green)
+                           .padding(.vertical, 4)
+                       } else {
+                         Button("Log in to Spotify") {
+                           authManager.startAuthorization()
+                         }
+                         .foregroundColor(.white)
+                         .cornerRadius(6)
+                       }
                     
                     Spacer()
                     
@@ -237,16 +199,6 @@ struct ContentView: View {
                 .padding()  // Outer padding around the HStack
                 .background((colorScheme == .light ? Color("Cream") : Color.black).opacity(0.8))
             }
-            
-            Button("Login with Spotify") {
-                // Safely unwrap the authURL from SpotifyAuthManager
-                if let authURL = SpotifyAuthManager.shared.authURL {
-                    NSWorkspace.shared.open(authURL)
-                } else {
-                    print("Error: Failed to generate the Spotify authorization URL.")
-                }
-            }
-
             
             // ✅ Saved Message
             if showSavedMessage {

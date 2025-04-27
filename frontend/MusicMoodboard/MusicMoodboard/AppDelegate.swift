@@ -2,31 +2,35 @@ import Cocoa
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    func application(_ app: NSApplication, open urls: [URL]) {
-        print("💥 open urls triggered – received:", urls)
-        
-        guard let url = urls.first else {
-            print("❌ No URL received")
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Register Apple Event handler for custom URL scheme
+        NSAppleEventManager.shared().setEventHandler(
+            self,
+            andSelector: #selector(handleURLEvent(_:withReplyEvent:)),
+            forEventClass: AEEventClass(kInternetEventClass),
+            andEventID: AEEventID(kAEGetURL)
+        )
+    }
+
+    // ✅ This is the only place where we handle incoming Spotify auth callback
+    @objc func handleURLEvent(_ event: NSAppleEventDescriptor, withReplyEvent: NSAppleEventDescriptor) {
+        guard let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue,
+              let url = URL(string: urlString) else {
+            print("❌ Invalid URL received")
             return
         }
-        
-        print("▶️ Full URL:", url.absoluteString)
-        
-        if url.scheme == "MusicMoodboard" {
-            print("✅ URL scheme matches")
-        } else {
-            print("❌ URL scheme mismatch: expected 'MusicMoodboard'")
-        }
-        
-        // Extract the code from the URL query
-        if let code = URLComponents(url: url, resolvingAgainstBaseURL: false)?
-            .queryItems?.first(where: { $0.name == "code" })?.value {
-            print("🔑 Authorization Code:", code)
-            SpotifyAuthManager.shared.exchangeCodeForToken(code: code) { success in
-                print(success ? "✅ Token fetched" : "❌ Token fetch failed")
+
+        print("💥 open urls triggered – received: \(url)")
+        NSApplication.shared.activate(ignoringOtherApps: true)
+
+        SpotifyAuthManager.shared.handleRedirect(url: url) { success in
+            if success {
+                print("✅ Successfully authenticated with Spotify")
+            } else {
+                print("❌ Failed to authenticate with Spotify")
             }
-        } else {
-            print("❌ Authorization code not found in URL")
         }
     }
+
 }

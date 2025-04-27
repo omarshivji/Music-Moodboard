@@ -7,8 +7,12 @@ class SpotifyAuthManager: ObservableObject {
     // Load sensitive data from environment variables
     let clientId = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_ID"] ?? "defaultClientId"  // Default as fallback
     let clientSecret = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_SECRET"] ?? "defaultClientSecret"  // Default as fallback
-    let redirectUri = "MusicMoodboard://callback"  // Keep this hardcoded if it's not sensitive (adjust if needed)
-    let scopes = "user-library-read"  // Adjust as needed for your app's required scopes
+    let redirectUri = "musicmoodboard://callback"
+    let scopes = [
+        "user-library-read",
+        "playlist-read-private",
+        "user-top-read"
+    ].joined(separator: " ")
 
     var accessToken: String?
 
@@ -65,7 +69,9 @@ class SpotifyAuthManager: ObservableObject {
         // exchange that code for a real token
         exchangeCodeForToken(code: code) { success in
             if success {
-                // the real token is now in self.accessToken
+                DispatchQueue.main.async {
+                    self.isAuthenticated = true
+                }
                 print("🎉 Access token: \(self.accessToken ?? "nil")")
                 completion(true)
             } else {
@@ -74,6 +80,7 @@ class SpotifyAuthManager: ObservableObject {
             }
         }
     }
+
 
 
 
@@ -108,3 +115,4 @@ class SpotifyAuthManager: ObservableObject {
         }.resume()
     }
 }
+

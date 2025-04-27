@@ -20,6 +20,8 @@
 		E15F8DCA2DBA31F600FCD044 /* HistoryPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */; };
 		E15F8DCC2DBA68B300FCD044 /* SpotifyAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */; };
 		E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */; };
+		E15F8DD12DBBF0A100FCD044 /* SpotifyAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */; };
+		E15F8DD32DBBF11600FCD044 /* SpotifyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,8 @@
 		E15F8DC92DBA31F600FCD044 /* HistoryPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryPanel.swift; sourceTree = "<group>"; };
 		E15F8DCB2DBA68B200FCD044 /* SpotifyAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAuthManager.swift; sourceTree = "<group>"; };
 		E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAPI.swift; sourceTree = "<group>"; };
+		E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyLibraryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +112,8 @@
 		E10F5D312DB80263008BBC95 /* MusicMoodboard */ = {
 			isa = PBXGroup;
 			children = (
+				E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */,
+				E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */,
 				E10F5D322DB80263008BBC95 /* MusicMoodboardApp.swift */,
 				E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */,
 				E10F5D342DB80263008BBC95 /* ContentView.swift */,
@@ -279,10 +285,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E15F8DD12DBBF0A100FCD044 /* SpotifyAPI.swift in Sources */,
 				E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */,
 				E10F5D352DB80263008BBC95 /* ContentView.swift in Sources */,
 				E15F8D562DB927E100FCD044 /* MarkdownViewer.swift in Sources */,
 				E15F8DCC2DBA68B300FCD044 /* SpotifyAuthManager.swift in Sources */,
+				E15F8DD32DBBF11600FCD044 /* SpotifyLibraryView.swift in Sources */,
 				E15F8D4C2DB8230E00FCD044 /* HumanEntry.swift in Sources */,
 				E10F5D332DB80263008BBC95 /* MusicMoodboardApp.swift in Sources */,
 				E15F8D4E2DB8233400FCD044 /* FileStore.swift in Sources */,
@@ -449,6 +457,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MusicMoodboard/MusicMoodboard.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -478,6 +487,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = MusicMoodboard/MusicMoodboard.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
