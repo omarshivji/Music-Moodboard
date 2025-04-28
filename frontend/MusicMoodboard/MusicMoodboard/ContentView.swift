@@ -191,7 +191,7 @@ struct ContentView: View {
                                             .foregroundColor(.secondary)
                                     }
                                     Spacer()
-                                    Button("🗑️") { deleteHistoryFile(at: url) }
+                                    Button("􀈱") { deleteHistoryFile(at: url) }
                                         .buttonStyle(.plain)
                                 }
                                 .padding(.horizontal)
