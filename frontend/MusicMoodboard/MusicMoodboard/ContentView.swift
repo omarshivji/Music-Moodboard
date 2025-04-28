@@ -39,23 +39,23 @@ struct ContentView: View {
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            // 🎵 Currently Listening To
-                            VStack(alignment: .leading) {
-                                Text("Currently Listening To:")
-                                    .font(.headline)
-                                    .foregroundColor(.gray.opacity(1.8))
-                                    .padding(.horizontal, 10)
-                                TextField("Enter song name...", text: $song)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .font(.title3)
-                                    .foregroundColor(.gray.opacity(1.8))
-                                    .padding(.horizontal, 10)
-                            }
+//                            // 🎵 Currently Listening To
+//                            VStack(alignment: .leading) {
+//                                Text("Currently Listening To:")
+//                                    .font(.headline)
+//                                    .foregroundColor(.gray.opacity(1.8))
+//                                    .padding(.horizontal, 10)
+//                                TextField("Enter song name...", text: $song)
+//                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                                    .font(.title3)
+//                                    .foregroundColor(.gray.opacity(1.8))
+//                                    .padding(.horizontal, 10)
+//                            }
 
                             // 🌈 Mood Suggestions
                             if !moodBasedSuggestions(for: mood).isEmpty {
                                 Text("Suggestions for ‘\(mood)’:")
-                                    .font(.subheadline)
+                                    .font(.headline)
                                     .foregroundColor(.gray.opacity(1.8))
                                     .padding(.horizontal, 10)
 
@@ -191,7 +191,7 @@ struct ContentView: View {
                                             .foregroundColor(.secondary)
                                     }
                                     Spacer()
-                                    Button("🗑️") { deleteHistoryFile(at: url) }
+                                    Button("􀈱") { deleteHistoryFile(at: url) }
                                         .buttonStyle(.plain)
                                 }
                                 .padding(.horizontal)
