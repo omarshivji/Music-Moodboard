@@ -22,6 +22,7 @@
 		E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */; };
 		E15F8DD12DBBF0A100FCD044 /* SpotifyAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */; };
 		E15F8DD32DBBF11600FCD044 /* SpotifyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */; };
+		E15F8DD52DBF726100FCD044 /* SpotifyPlaybackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15F8DD42DBF726000FCD044 /* SpotifyPlaybackManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +63,7 @@
 		E15F8DCD2DBA697A00FCD044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyAPI.swift; sourceTree = "<group>"; };
 		E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyLibraryView.swift; sourceTree = "<group>"; };
+		E15F8DD42DBF726000FCD044 /* SpotifyPlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyPlaybackManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 		E10F5D312DB80263008BBC95 /* MusicMoodboard */ = {
 			isa = PBXGroup;
 			children = (
+				E15F8DD42DBF726000FCD044 /* SpotifyPlaybackManager.swift */,
 				E15F8DD22DBBF11600FCD044 /* SpotifyLibraryView.swift */,
 				E15F8DD02DBBF0A100FCD044 /* SpotifyAPI.swift */,
 				E10F5D322DB80263008BBC95 /* MusicMoodboardApp.swift */,
@@ -285,6 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E15F8DD52DBF726100FCD044 /* SpotifyPlaybackManager.swift in Sources */,
 				E15F8DD12DBBF0A100FCD044 /* SpotifyAPI.swift in Sources */,
 				E15F8DCE2DBA697A00FCD044 /* AppDelegate.swift in Sources */,
 				E10F5D352DB80263008BBC95 /* ContentView.swift in Sources */,

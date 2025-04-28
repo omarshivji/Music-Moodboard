@@ -19,259 +19,202 @@ struct ContentView: View {
     @State private var fileList: [URL] = []
     @State private var selectedFile: URL?
     @State private var showingFile = false
-    @State private var showHistory = false
-    @State private var showHistoryPicker = false
-    @State private var selectedHistoryEntry: String? = nil
-    @State private var audioPlayer: AVAudioPlayer? // Audio Player instance
-    @State private var isPlaying: Bool = false // Track whether audio is playing
-    @State private var showingFileImporter = false
     @State private var showHistoryPanel = false
-    @State private var text: String = ""
-    @State private var saveMessage: String? = nil
+    @State private var showSpotifyPanel = false   // ← new!
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var isPlaying: Bool = false
+    @State private var showingFileImporter = false
     @StateObject private var authManager = SpotifyAuthManager.shared
-
-
 
     let moods = ["Chill", "Focused", "Reflective", "Angsty", "Joyful"]
     let timerOptions: [Int?] = [nil, 15, 30, 60]
 
     var body: some View {
-      GeometryReader { geo in
-        HStack(spacing: 0) {
-          // ─────────── Main Writing Area ───────────
-            ZStack(alignment: .bottom) {
-                (colorScheme == .light ? Color("Cream") : Color.black)
-                    .edgesIgnoringSafeArea(.all)
-                
-                ScrollView {
-                  VStack(alignment: .leading, spacing: 16) {
-                    // 🎵 Currently Listening To
-                    VStack(alignment: .leading) {
-                      Text("Currently Listening To:")
-                        .font(.headline)
-                        .foregroundColor(.gray.opacity(1.8))
-                      TextField("Enter song name...", text: $song)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .font(.title3)
-                        .foregroundColor(.gray.opacity(1.8))
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                // ─────────── Main Writing Area ───────────
+                ZStack(alignment: .bottom) {
+                    (colorScheme == .light ? Color("Cream") : Color.black)
+                        .edgesIgnoringSafeArea(.all)
+
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            // 🎵 Currently Listening To
+                            VStack(alignment: .leading) {
+                                Text("Currently Listening To:")
+                                    .font(.headline)
+                                    .foregroundColor(.gray.opacity(1.8))
+                                    .padding(.horizontal, 10)
+                                TextField("Enter song name...", text: $song)
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .font(.title3)
+                                    .foregroundColor(.gray.opacity(1.8))
+                                    .padding(.horizontal, 10)
+                            }
+
+                            // 🌈 Mood Suggestions
+                            if !moodBasedSuggestions(for: mood).isEmpty {
+                                Text("Suggestions for ‘\(mood)’:")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray.opacity(1.8))
+                                    .padding(.horizontal, 10)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 8) {
+                                        ForEach(moodBasedSuggestions(for: mood), id: \.self) { suggestion in
+                                            Text(suggestion)
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 8)
+                                                .background(Color.gray.opacity(0.2))
+                                                .cornerRadius(8)
+                                                .foregroundColor(.gray.opacity(1.8))
+                                        }
+                                    }
+                                    .padding(.horizontal, 10)
+                                }
+                            }
+
+                            // ✍️ Notes
+                            TextEditor(text: $notes)
+                                .font(fontForMood(mood: mood))
+                                .padding(8)
+                                .frame(minHeight: 200)
+                                .scrollContentBackground(.hidden)
+                                .background(colorScheme == .light ? Color("Cream") : Color.black)
+                                .foregroundColor(.gray.opacity(1.8))
+                                .overlay(alignment: .topLeading) {
+                                    if notes.isEmpty {
+                                        Text(placeholderText)
+                                            .font(fontForMood(mood: mood))
+                                            .foregroundColor(colorScheme == .light
+                                                             ? .gray.opacity(0.7)
+                                                             : .white.opacity(0.7))
+                                            .padding(EdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12))
+                                    }
+                                }
+
+                            // ─────────── SpotifyLibraryView ───────────
+                            // (only visible when panel open, but you can leave here if needed)
+                            // .opacity(showSpotifyPanel ? 1 : 0)
+                        }
                     }
 
-                    // 🌈 Mood Suggestions
-                    if !moodBasedSuggestions(for: mood).isEmpty {
-                      Text("Suggestions for ‘\(mood)’:")
-                        .font(.subheadline)
-                        .foregroundColor(.gray.opacity(1.8))
-                      ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                          ForEach(moodBasedSuggestions(for: mood), id: \.self) { suggestion in
-                            Text(suggestion)
-                              .padding(.horizontal, 12)
-                              .padding(.vertical, 8)
-                              .background(Color.gray.opacity(0.2))
-                              .cornerRadius(8)
-                              .foregroundColor(.gray.opacity(1.8))
-                          }
+                    // 🔽 Bottom Bar
+                    HStack {
+                        Button(action: cycleMood) {
+                            Text(mood)
+                                .foregroundColor(.gray.opacity(1.8))
                         }
-                      }
-                    }
-                    // ✍️ Notes
-                    TextEditor(text: $notes)
-                      .font(fontForMood(mood: mood))
-                      .padding(8)
-                      // remove the crazy 1000-point minHeight
-                      //.frame(minHeight: 1000)
-                      .frame(minHeight: 200)        // something more reasonable
-                      .scrollContentBackground(.hidden)
-                      .background(colorScheme == .light ? Color("Cream") : Color.black)
-                      .foregroundColor(.gray.opacity(1.8))
-                      .overlay(alignment: .topLeading) {
-                        if notes.isEmpty {
-                          Text(placeholderText)
-                            .font(fontForMood(mood: mood))
-                            .foregroundColor(colorScheme == .light
-                                             ? .gray.opacity(0.7)
-                                             : .white.opacity(0.7))
-                            .padding(EdgeInsets(top: 10, leading: 8, bottom: 10, trailing: 8))
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        Button(action: cycleTimer) {
+                            Text(timerMinutes == nil ? "Timer" : "\(timerMinutes!) min")
+                                .foregroundColor(.gray.opacity(1.8))
                         }
-                      }
-                        
-                            .border(Color.clear)
+                        .buttonStyle(.plain)
+
+                        if let time = timeRemaining {
+                            Text("⏱ \(formatTime(time))")
+                                .font(.caption)
+                                .foregroundColor(.gray.opacity(1.8))
+                        }
+
+                        Spacer()
+
+                        // ← music.note now toggles Spotify panel →
+                        Button(action: {
+                            withAnimation { showSpotifyPanel.toggle() }
+                        }) {
+                            Image(systemName: "music.note")
+                                .font(.system(size: 18))
+                                .foregroundColor(.gray.opacity(1.8))
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        Button(action: {
+                            withAnimation { showHistoryPanel.toggle() }
+                        }) {
+                            Text("History")
+                                .foregroundColor(.gray.opacity(1.8))
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        // Dark/Light Toggle
+                        Button(action: {
+                            colorScheme = (colorScheme == .light ? .dark : .light)
+                        }) {
+                            Image(systemName: colorScheme == .light ? "sun.max.fill" : "moon.fill")
+                                .foregroundColor(.gray.opacity(1.8))
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        // Save
+                        Button(action: saveEntryToFile) {
+                            Text("Save")
+                                .foregroundColor(.gray.opacity(1.8))
+                        }
+                        .buttonStyle(.plain)
                     }
+                    .padding()
+                    .background((colorScheme == .light ? Color("Cream") : Color.black).opacity(0.8))
+                }
+
+                // ─────────── Spotify Panel ───────────
+                if showSpotifyPanel {
+                    Divider()
                     SpotifyLibraryView()
-                          .environmentObject(authManager)
+                        .environmentObject(authManager)
+                        .frame(width: geo.size.width * 0.25)
+                        .background(colorScheme == .light ? Color("Cream") : Color.black)
+                        .transition(.move(edge: .leading))
                 }
-                
-                // 🔽 Bottom Bar (Restored)
-                HStack {
-                    Button(action: cycleMood) {
-                        Text(mood)
-                            .foregroundColor(.gray.opacity(1.8))
-                        // Removed padding here
-                    }
-                    .buttonStyle(.plain)  // Added this to remove the pill shape
-                    
-                    Spacer()
-                    
-                    Button(action: cycleTimer) {
-                        Text(timerMinutes == nil ? "Timer" : "\(timerMinutes!) min")
-                            .foregroundColor(.gray.opacity(1.8))
-                        // Removed padding here
-                    }
-                    .buttonStyle(.plain)
-                    
-                    if let time = timeRemaining {
-                        Text("⏱ \(formatTime(time))")
-                            .font(.caption)
-                            .foregroundColor(.gray.opacity(1.8))
-                            .padding(.leading)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        withAnimation {
-                            showHistoryPanel.toggle()
+
+                // ─────────── History Panel ───────────
+                if showHistoryPanel {
+                    Divider()
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 8) {
+                            ForEach(fileList, id: \.self) { url in
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(url.deletingPathExtension().lastPathComponent)
+                                        Text(displayDate(for: url))
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    Button("🗑️") { deleteHistoryFile(at: url) }
+                                        .buttonStyle(.plain)
+                                }
+                                .padding(.horizontal)
+                                Divider()
+                            }
                         }
-                    }) {
-                        Text("History")
-                            .foregroundColor(.gray.opacity(1.8))
-                        // Removed padding here
                     }
-                    .buttonStyle(.plain)
-                    
-                    Spacer()
-                    
-                    // Play/Pause button
-                    Button(action: {
-                        if isPlaying {
-                            audioPlayer?.pause()
-                        } else {
-                            audioPlayer?.play()
-                        }
-                        isPlaying.toggle()
-                    }) {
-                        Image(systemName: "music.note")
-                            .font(.system(size: 15))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 10) // You can adjust this to suit the design
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Spacer()
-                    
-                    // ▶️ Spotify Login / Status
-                       if let token = authManager.accessToken {
-                         Text("🔑 Authenticated!\(token)")
-                           .font(.subheadline)
-                           .foregroundColor(.green)
-                           .padding(.vertical, 4)
-                       } else {
-                         Button("Log in to Spotify") {
-                           authManager.startAuthorization()
-                         }
-                         .foregroundColor(.white)
-                         .cornerRadius(6)
-                       }
-                    
-                    Spacer()
-                    
-                    // Dark/Light mode toggle button
-                    Button(action: {
-                        colorScheme = (colorScheme == .light) ? .dark : .light
-                    }) {
-                        Image(systemName: colorScheme == .light ? "sun.max.fill" : "moon.fill")
-                            .foregroundColor(.gray.opacity(1.8))
-                            .padding(.horizontal) // You can keep or remove this depending on spacing preference
-                    }
-                    .buttonStyle(.plain)
-                    
-                    // Save button
-                    Button(action: saveEntryToFile) {
-                        Text("Save")
-                            .font(.headline)
-                            .foregroundColor(.gray.opacity(1.8))
-                        // Removed .padding(.vertical, 10) and .padding(.horizontal, 20) for minimalism
-                            .cornerRadius(10)  // Optional: only if you still want rounded corners
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal) // You can keep this for spacing around the button group
+                    .frame(width: geo.size.width * 0.25)
+                    .background((colorScheme == .light ? Color("Cream") : Color.black))
+                    .transition(.move(edge: .trailing))
                 }
-                .padding()  // Outer padding around the HStack
-                .background((colorScheme == .light ? Color("Cream") : Color.black).opacity(0.8))
             }
-            
-            // ✅ Saved Message
-            if showSavedMessage {
-                Text("Entry Saved")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    .foregroundColor(Color.gray.opacity(0.8)) //
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 24)
-                    .cornerRadius(10) // Optional: can keep if you want rounded corners without a background
-                    .transition(.opacity)
+        }
+        .sheet(isPresented: $showingFile) {
+            if let file = selectedFile {
+                MarkdownViewer(fileURL: file)
             }
+        }
+        .onAppear(perform: loadSavedFiles)
+        .preferredColorScheme(colorScheme)
+    }
 
-        
-
-            // ─────────── History Panel ───────────
-            if showHistoryPanel {
-              Divider()  // optional thin line
-
-              ScrollView {
-                LazyVStack(alignment: .leading, spacing: 8) {
-                    ForEach(fileList, id: \.self) { url in
-                      // Wrap the entire row in a Button:
-                      Button(action: {
-                        // Load file into your TextEditor
-                        loadFileContent(from: url)
-                        // Close the sidebar
-                        withAnimation { showHistoryPanel = false }
-                      }) {
-                        HStack {
-                          VStack(alignment: .leading, spacing: 4) {
-                            Text(url.deletingPathExtension().lastPathComponent)
-                              .lineLimit(1)
-                            Text(displayDate(for: url))
-                              .font(.caption)
-                              .foregroundColor(.secondary)
-                          }
-                          Spacer()
-                          // Keep delete button as-is
-                          Button(action: {
-                            deleteHistoryFile(at: url)
-                          }) {
-                            Text("🗑️")
-                          }
-                          .buttonStyle(.plain)
-                          .help("Delete this file")
-                        }
-                        .padding(.horizontal)
-                      }
-                      .buttonStyle(.plain)  // ensure only your custom highlight
-                      Divider()
-                    }
-
-                }
-              }
-              .frame(width: geo.size.width * 0.25)    // 25% width for history panel
-              .background((colorScheme == .light ? Color("Cream") : Color.black))
-              .transition(.move(edge: .trailing))
-              .animation(.easeInOut, value: showHistoryPanel)
-            }
-
-               }
-               .sheet(isPresented: $showingFile) {
-                 if let selectedFile = selectedFile {
-                   MarkdownViewer(fileURL: selectedFile)
-                 }
-               }
-               .onAppear(perform: loadSavedFiles)
-               .preferredColorScheme(colorScheme)
-             }
-           }
-
-    
-
+    // … all of your existing helper methods (saveEntryToFile, loadSavedFiles, displayDate, fontForMood, cycleMood, cycleTimer, etc.) go here unchanged …
 
     // MARK: - File Management
     private var saveDirectoryURL: URL {

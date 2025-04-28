@@ -8,12 +8,17 @@ class SpotifyAuthManager: ObservableObject {
     let clientId = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_ID"] ?? "defaultClientId"  // Default as fallback
     let clientSecret = ProcessInfo.processInfo.environment["SPOTIFY_CLIENT_SECRET"] ?? "defaultClientSecret"  // Default as fallback
     let redirectUri = "musicmoodboard://callback"
-    let scopes = [
-        "user-library-read",
-        "playlist-read-private",
-        "user-top-read"
-    ].joined(separator: " ")
-
+    private let scopesArray = [
+            "user-library-read",
+            "playlist-read-private",
+            "user-top-read",
+            "user-modify-playback-state",
+            "user-read-playback-state"
+        ]
+        
+        var scopes: String {
+            scopesArray.joined(separator: " ")
+        }
     var accessToken: String?
 
     // Published variable to track authentication state
@@ -115,4 +120,3 @@ class SpotifyAuthManager: ObservableObject {
         }.resume()
     }
 }
-

@@ -21,7 +21,7 @@ func fetchLikedSongs(authToken: String, completion: @escaping ([Track]?, Error?)
         }
         
         // Debug: print the raw JSON
-        print("Raw JSON:", String(data: data, encoding: .utf8) ?? "Couldn't decode")
+//        print("Raw JSON:", String(data: data, encoding: .utf8) ?? "Couldn't decode")
         
         do {
             let decoder = JSONDecoder()
