@@ -10,116 +10,122 @@ struct SpotifyLibraryView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(spacing: 16) {
+        Group {
             if let token = authManager.accessToken {
-                // ── Refresh Device ──
-                HStack {
-                    Button("🔄 Refresh") {
-                        isLoading = true
-                        playbackManager.fetchActiveDevice(authToken: token)
-                        loadLibrary(authToken: token)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 8)
-                }
-                
-                // ── Status & Errors ──
-                if isLoading {
-                    ProgressView()
-                        .padding(.horizontal)
-                }
-                if let err = errorMessage {
-                    Text(err)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                        .padding(.horizontal)
-                }
-                if let devErr = playbackManager.errorMessage {
-                    Text(devErr)
-                        .foregroundColor(.orange)
-                        .font(.caption)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-
-                Divider().padding(.vertical, 8)
-
-                // ── Liked Songs ──
-                if !likedSongs.isEmpty {
-                    Text("Your Top Tracks")
-                        .font(.headline)
-                        .padding(.horizontal)
-
-                    // Play / Pause / Skip Controls
-                    HStack(spacing: 20) {
-                        Button("⏮️") {
-                            playbackManager.goBack(authToken: token)
+                VStack(spacing: 16) {
+                    // ── Refresh Button ──
+                    HStack {
+                        Button("􀅈 Refresh") {
+                            isLoading = true
+                            playbackManager.fetchActiveDevice(authToken: token)
+                            loadLibrary(authToken: token)
                         }
                         .buttonStyle(.plain)
-
-                        Button("⏯️") {
-                            playbackManager.togglePlayback(authToken: token)
-                        }
-                        .buttonStyle(.plain)
-
-                        Button("⏭️") {
-                            playbackManager.skipToNextTrack(authToken: token)
-                        }
-                        .buttonStyle(.plain)
+                        .padding(.horizontal, 8)
+                        
+                        Spacer()
                     }
-
-                    // Play All Liked Songs
-                    Button("▶️ Play All Liked Songs") {
-                        playbackManager.playTracks(
-                            authToken: token,
-                            trackURIs: likedSongs.map(\.uri)
-                        )
+                    
+                    // ── Status & Errors ──
+                    if isLoading {
+                        ProgressView()
+                            .padding(.horizontal)
                     }
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 8)
-
-                    ScrollView {
-                        VStack(spacing: 8) {
-                            ForEach(likedSongs) { track in
-                                TrackRow(track: track)
-                            }
-                        }
-                        .padding(.horizontal)
+                    if let err = errorMessage {
+                        Text(err)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .padding(.horizontal)
+                    }
+                    if let devErr = playbackManager.errorMessage {
+                        Text(devErr)
+                            .foregroundColor(.orange)
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
                     }
 
                     Divider().padding(.vertical, 8)
-                }
 
-                // ── Playlists ──
-                if !playlists.isEmpty {
-                    Text("Your Playlists")
-                        .font(.headline)
-                        .padding(.horizontal)
+                    // ── Liked Songs ──
+                    if !likedSongs.isEmpty {
+                        Text("Your Top Tracks")
+                            .font(.headline)
+                            .padding(.horizontal)
 
-                    ScrollView {
-                        VStack(spacing: 12) {
-                            ForEach(playlists) { pl in
-                                HStack {
-                                    Text(pl.name)
-                                        .font(.subheadline)
-                                    Spacer()
-                                    Button("▶️") {
-                                        playbackManager.playPlaylist(
-                                            authToken: token,
-                                            playlistURI: pl.uri
-                                        )
-                                    }
-                                    .buttonStyle(.plain)
+                        // Playback Controls
+                        HStack(spacing: 20) {
+                            Button("􀊑") {
+                                playbackManager.goBack(authToken: token)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button("􀊇") {
+                                playbackManager.togglePlayback(authToken: token)
+                            }
+                            .buttonStyle(.plain)
+
+                            Button("􀊓") {
+                                playbackManager.skipToNextTrack(authToken: token)
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        // Play All Button
+                        Button("􀊃 Play All Liked Songs") {
+                            playbackManager.playTracks(
+                                authToken: token,
+                                trackURIs: likedSongs.map(\.uri)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 8)
+
+                        // Scrollable Row of Liked Songs
+                        ScrollView(.horizontal, showsIndicators: true) {
+                            HStack(alignment: .top, spacing: 16) {
+                                ForEach(likedSongs) { track in
+                                    TrackRow(track: track)
+                                        .frame(width: 120)
                                 }
-                                .padding(.horizontal)
+                            }
+                            .padding(.horizontal)
+                        }
+
+                        Divider().padding(.vertical, 8)
+                    }
+
+                    // ── Playlists ──
+                    if !playlists.isEmpty {
+                        Text("Your Playlists")
+                            .font(.headline)
+                            .padding(.horizontal)
+
+                        ScrollView {
+                            VStack(spacing: 12) {
+                                ForEach(playlists) { pl in
+                                    HStack {
+                                        Text(pl.name)
+                                            .font(.subheadline)
+                                        Spacer()
+                                        Button("􀊃") {
+                                            playbackManager.playPlaylist(
+                                                authToken: token,
+                                                playlistURI: pl.uri
+                                            )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                    .padding(.horizontal)
+                                }
                             }
                         }
+                        Divider().padding(.vertical, 8)
                     }
-                    Divider().padding(.vertical, 8)
                 }
-
+                .padding()
             } else {
-                // ── Not Authenticated ──
+                // ── Not Authenticated View ──
                 VStack(spacing: 12) {
                     Text("Not logged in to Spotify")
                         .foregroundColor(.secondary)
@@ -166,30 +172,38 @@ struct SpotifyLibraryView: View {
     }
 }
 
-// MARK: – TrackRow
+// ── MARK: - TrackRow (small view for each liked song)
 
 private struct TrackRow: View {
     let track: Track
+
     var body: some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 8) {
             if let url = URL(string: track.album.images.first?.url ?? "") {
                 AsyncImage(url: url) { img in
-                    img.resizable().scaledToFill()
+                    img.resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 80, height: 80)
+                        .clipped()
+                        .cornerRadius(8)
                 } placeholder: {
                     Color.gray.opacity(0.3)
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(8)
                 }
-                .frame(width: 48, height: 48)
-                .cornerRadius(4)
             }
-            VStack(alignment: .leading, spacing: 4) {
-                Text(track.name)
-                    .font(.subheadline)
-                    .lineLimit(1)
-                Text(track.artists.map(\.name).joined(separator: ", "))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-            }
+
+            Text(track.name)
+                .font(.caption)
+                .lineLimit(1)
+                .multilineTextAlignment(.center)
+
+            Text(track.artists.map(\.name).joined(separator: ", "))
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .multilineTextAlignment(.center)
         }
+        .frame(width: 100)
     }
 }
