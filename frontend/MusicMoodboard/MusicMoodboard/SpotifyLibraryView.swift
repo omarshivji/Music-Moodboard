@@ -3,7 +3,7 @@ import SwiftUI
 struct SpotifyLibraryView: View {
     @EnvironmentObject var authManager: SpotifyAuthManager
     @StateObject private var playbackManager = SpotifyPlaybackManager()
-    
+
     @State private var likedSongs: [Track] = []
     @State private var playlists: [Playlist] = []
     @State private var isLoading = false
@@ -15,14 +15,17 @@ struct SpotifyLibraryView: View {
                 VStack(spacing: 16) {
                     // ── Refresh Button ──
                     HStack {
-                        Button("􀅈 Refresh") {
+                        Button {
                             isLoading = true
                             playbackManager.fetchActiveDevice(authToken: token)
                             loadLibrary(authToken: token)
+                        } label: {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                                .font(.title)
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal, 8)
-                        
+
                         Spacer()
                     }
                     
@@ -55,28 +58,33 @@ struct SpotifyLibraryView: View {
 
                         // Playback Controls
                         HStack(spacing: 20) {
-                            Button("􀊑") {
-                                playbackManager.goBack(authToken: token)
+                            Button(action: { playbackManager.goBack(authToken: token) }) {
+                                Image(systemName: "backward.fill")
+                                    .font(.title2)
                             }
                             .buttonStyle(.plain)
 
-                            Button("􀊇") {
-                                playbackManager.togglePlayback(authToken: token)
+                            Button(action: { playbackManager.togglePlayback(authToken: token) }) {
+                                Image(systemName: "playpause.fill")
+                                    .font(.title2)
                             }
                             .buttonStyle(.plain)
 
-                            Button("􀊓") {
-                                playbackManager.skipToNextTrack(authToken: token)
+                            Button(action: { playbackManager.skipToNextTrack(authToken: token) }) {
+                                Image(systemName: "forward.fill")
+                                    .font(.title2)
                             }
                             .buttonStyle(.plain)
                         }
 
                         // Play All Button
-                        Button("􀊃 Play All Liked Songs") {
+                        Button(action: {
                             playbackManager.playTracks(
                                 authToken: token,
                                 trackURIs: likedSongs.map(\.uri)
                             )
+                        }) {
+                            Text("Play All Liked Songs")
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal, 8)
@@ -101,29 +109,34 @@ struct SpotifyLibraryView: View {
                             .font(.headline)
                             .padding(.horizontal)
 
-                        ScrollView {
-                            VStack(spacing: 12) {
-                                ForEach(playlists) { pl in
-                                    HStack {
-                                        Text(pl.name)
-                                            .font(.subheadline)
-                                        Spacer()
-                                        Button("􀊃") {
-                                            playbackManager.playPlaylist(
-                                                authToken: token,
-                                                playlistURI: pl.uri
-                                            )
-                                        }
-                                        .buttonStyle(.plain)
+                        List {
+                            ForEach(playlists) { pl in
+                                HStack {
+                                    Text(pl.name)
+                                        .font(.subheadline)
+                                    Spacer()
+                                    Button(action: {
+                                        playbackManager.playPlaylist(
+                                            authToken: token,
+                                            playlistURI: pl.uri
+                                        )
+                                    }) {
+                                        Image(systemName: "play.fill")
+                                            .font(.title2)
                                     }
-                                    .padding(.horizontal)
+                                    .buttonStyle(.plain)
                                 }
+                                .padding(.horizontal)
                             }
                         }
-                        Divider().padding(.vertical, 8)
+                        .listStyle(PlainListStyle())
                     }
+
                 }
                 .padding()
+                .refreshable {
+                    loadLibrary(authToken: token)
+                }
             } else {
                 // ── Not Authenticated View ──
                 VStack(spacing: 12) {
@@ -149,24 +162,34 @@ struct SpotifyLibraryView: View {
 
     private func loadLibrary(authToken: String) {
         isLoading = true
+        var tasksRemaining = 2
+
+        func taskFinished() {
+            tasksRemaining -= 1
+            if tasksRemaining == 0 {
+                isLoading = false
+            }
+        }
+
         fetchLikedSongs(authToken: authToken) { songs, error in
             DispatchQueue.main.async {
-                self.isLoading = false
                 if let error = error {
                     self.errorMessage = "Songs fetch error: \(error.localizedDescription)"
                 } else {
                     self.likedSongs = songs ?? []
                 }
+                taskFinished()
             }
         }
+
         fetchPlaylists(authToken: authToken) { pls, error in
             DispatchQueue.main.async {
-                self.isLoading = false
                 if let error = error {
                     self.errorMessage = "Playlists fetch error: \(error.localizedDescription)"
                 } else {
                     self.playlists = pls ?? []
                 }
+                taskFinished()
             }
         }
     }
@@ -183,14 +206,13 @@ private struct TrackRow: View {
                 AsyncImage(url: url) { img in
                     img.resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 80, height: 80)
                         .clipped()
-                        .cornerRadius(8)
                 } placeholder: {
                     Color.gray.opacity(0.3)
                         .frame(width: 80, height: 80)
-                        .cornerRadius(8)
                 }
+                .frame(width: 80, height: 80)
+                .cornerRadius(8)
             }
 
             Text(track.name)
